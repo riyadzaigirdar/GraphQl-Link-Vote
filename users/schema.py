@@ -56,8 +56,28 @@ class CreateUser(graphene.Mutation):
         )
 
 
+class UpdateUser(graphene.Mutation):
+    updated_user = graphene.Field(UserType)
+
+    class Arguments:
+        username = graphene.String()
+        email = graphene.String()
+
+    def mutate(self, info, username, email):
+        user = info.context.user
+        if user is None:
+            raise Exception("You can only update your own credintials")
+        user = get_user_model().objects.get(username=user.username)
+        if user:
+            user.username = username
+            user.email = email
+            user.save()
+        return UpdateUser(updated_user=user)
+
+
 class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()
+    update_user = UpdateUser.Field()
 
 
 # Mutation Ends

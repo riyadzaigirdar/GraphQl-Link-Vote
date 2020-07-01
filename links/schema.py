@@ -98,7 +98,33 @@ class CreateVote(graphene.Mutation):
 
 # vote create MUTATION ends
 
+# DELETE LINK
+
+
+class DeleteLink(graphene.Mutation):
+    deleted = graphene.Boolean()
+
+    class Arguments:
+        url = graphene.String()
+        description = graphene.String()
+
+    def mutate(self, info, url, description):
+        user = info.context.user
+        print(user.id)
+        link = Link.objects.filter(url=url)
+        if link:
+            if link.filter(posted_by__id=user.id).exists():
+                link.delete()
+                return DeleteLink(deleted=True)
+            else:
+                raise Exception("You are not authorize to delete this url")
+        else:
+            raise Exception("url doesn't exists")
+
+# DELETE LINK END
+
 
 class Mutation(graphene.ObjectType):
     create_link = CreateLink.Field()
     create_vote = CreateVote.Field()
+    delete_link = DeleteLink.Field()
