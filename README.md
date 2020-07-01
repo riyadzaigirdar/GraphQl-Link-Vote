@@ -12,6 +12,8 @@ Link :
 3. User can CREATE link object providing url and description
 4. ANONYMOUS user can CREATE link
 5. user can DELETE his/her own created link
+6. PAGINATION Added
 
 Votes:
 1. Users can cast(CREATE) votes in any link object
+2. Users can QUERY votes casted in a link id 
