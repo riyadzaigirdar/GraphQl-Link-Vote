@@ -1,7 +1,7 @@
 aniso8601==7.0.0
 astroid==2.4.2
 autopep8==1.5.3
-Django==2.1.5
+Django==2.2.13
 django-environ==0.4.5
 django-filter==2.0.0
 django-graphql-jwt==0.1.5
