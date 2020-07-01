@@ -11,12 +11,34 @@ class LinkType(DjangoObjectType):
         model = Link
 
 
-class Query(graphene.ObjectType):
-    links = graphene.List(LinkType)
+class VotesType(DjangoObjectType):
+    class Meta:
+        model = Votes
 
-    def resolve_links(self, info, **kwargs):
-        print(Link.objects.all)
-        return Link.objects.all()
+
+class Query(graphene.ObjectType):
+    links = graphene.List(LinkType, first=graphene.Int(), skip=graphene.Int())
+    votes = graphene.List(VotesType, search=graphene.Int())
+
+    def resolve_links(self, info, first=None, skip=None):
+        qs = Link.objects.all()
+        if skip:
+            qs = qs[skip:]
+        if first:
+            qs = qs[:first]
+        return qs
+
+    def resolve_votes(self, info, search=None):
+        user = info.context.user
+        if user.is_anonymous:
+            raise Exception("You must me logged in to see list of votes")
+        if search:
+            if Link.objects.get(id=search):
+                return Votes.objects.filter(link__id=search)
+            else:
+                raise Exception("link id does not exist")
+        return Votes.objects.all()
+
 
 # list QUERY ends
 
